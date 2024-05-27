@@ -1,0 +1,22 @@
+{
+    "type": "module",
+    "devDependencies": {
+        "@eslint/js": "^9.2.0",
+        "@types/p5": "^1.7.6",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "globals": "^15.2.0",
+        "prettier": "3.2.5",
+        "vite": "^5.2.11",
+        "typescript": "^5.4.5"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc --noEmit && vite build",
+        "serve": "vite preview",
+        "tsc": "tsc"
+    },
+    "dependencies": {
+        "p5": "^1.9.4"
+    }
+}
