@@ -2,7 +2,7 @@ import type p5 from "p5";
 import { Key } from "./Key";
 
 // Create an array that will hold keys.
-let keys: Key[] = [];
+const keys: Key[] = [];
 
 // Constants.
 export const GRAVITY = 1.7;
@@ -22,13 +22,13 @@ export default function sketch(p: p5) {
         // Add Key objects to the array.
         for (let i = 0; i < 5; i += 1) {
             // Calculate random coordinates and size.
-            let x = p.random(0, p.windowWidth);
-            let y = p.random(0, p.windowHeight);
-            let size = p.random(MIN_SIZE, MAX_SIZE);
-            let letter = p.random(0, 25);
+            const x = p.random(0, p.windowWidth);
+            const y = p.random(0, p.windowHeight);
+            const size = p.random(MIN_SIZE, MAX_SIZE);
+            const letter = p.random(0, 25);
 
             // Create a new Key object.
-            let key = new Key(x, y, size, LETTERS[Math.round(letter)]);
+            const key = new Key(x, y, size, LETTERS[Math.round(letter)]);
 
             // Add the Key to the array.
             keys.push(key);
@@ -41,7 +41,7 @@ export default function sketch(p: p5) {
     p.draw = () => {
         p.background("black");
 
-        for (let key of keys) {
+        for (const key of keys) {
             // Show the key.
             key.show(p);
 

@@ -52,7 +52,7 @@ export class Key {
         p.text(this.letter, this.x + width / 2, this.y + this.size / 2);
     }
 
-    update(p: p5) {
+    update() {
         if (!this.alive) {
             return;
         }
