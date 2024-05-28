@@ -6,36 +6,20 @@ const keys: Key[] = [];
 
 // Constants.
 export const GRAVITY = 1.7;
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const MAX_SIZE = 120;
-const MIN_SIZE = 40;
-const MIN_INITIAL_SPEED = 50;
-const MAX_INITIAL_SPEED = 75;
+export const MAX_SIZE = 120;
+export const MIN_SIZE = 40;
+export const MIN_INITIAL_SPEED = 50;
+export const MAX_INITIAL_SPEED = 75;
 export const MAX_SPEED = 100;
-const MIN_INITIAL_POSITION = 0;
+export const MIN_INITIAL_POSITION = 0;
 export const MAX_INITIAL_POSITION = 400;
 
 export default function sketch(p: p5) {
     p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
-
-        // Add Key objects to the array.
-        for (let i = 0; i < 5; i += 1) {
-            // Calculate random coordinates and size.
-            const x = p.random(0, p.windowWidth);
-            const y = p.random(0, p.windowHeight);
-            const size = p.random(MIN_SIZE, MAX_SIZE);
-            const letter = p.random(0, 25);
-
-            // Create a new Key object.
-            const key = new Key(x, y, size, LETTERS[Math.round(letter)]);
-
-            // Add the Key to the array.
-            keys.push(key);
-        }
-
-        // Slow the frame rate.
-        p.frameRate(60);
+    };
+    p.windowResized = () => {
+        p.resizeCanvas(p.windowWidth, p.windowHeight);
     };
 
     p.draw = () => {
@@ -46,28 +30,46 @@ export default function sketch(p: p5) {
             key.show(p);
 
             // Move the key.
-            key.update(p);
+            key.update();
 
             // Wrap around if they've moved off the canvas
             key.checkEdges(p);
+
+            if (!key.alive) {
+                keys.splice(keys.indexOf(key), 1);
+            }
         }
     };
+    /**
+     * Handles key press events and creates new Key objects.
+     * @param e - The keyboard event.
+     */
     p.keyPressed = (e: KeyboardEvent) => {
         let key = null;
-        if (e.code === "ENTER") {
-            key = "ENTER";
-        } else if (e.code === "Space") {
+
+        // Map specific "special" keys to a different output.
+        if (e.code === "Space") {
             key = "SPACE";
         } else if (e.code === "MetaLeft" || e.code === "MetaRight") {
             key = "CMD";
         } else if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
             key = "SHIFT";
-        } else if (e.code === "ControlRight" || e.code === "ControlRight") {
+        } else if (e.code === "ControlRight" || e.code === "ControlLeft") {
             key = "CTRL";
         } else if (e.code === "AltRight" || e.code === "AltLeft") {
             key = "Opt";
+        } else if (e.code === "ArrowLeft") {
+            key = "←";
+        } else if (e.code === "ArrowRight") {
+            key = "→";
+        } else if (e.code === "ArrowUp") {
+            key = "↑";
+        } else if (e.code === "ArrowDown") {
+            key = "↓";
         }
-
+        console.log(`hsl(${p.random(0, 360)}, 100%, 50%)`);
+        // Create a new Key object with random position, size, and speed.
+        // If the key is not a special key, use the pressed key's character.
         keys.push(
             new Key(
                 p.random(0, p.windowWidth - MAX_SIZE),
@@ -75,6 +77,9 @@ export default function sketch(p: p5) {
                     p.random(MIN_INITIAL_POSITION, MAX_INITIAL_POSITION),
                 p.random(MIN_SIZE, MAX_SIZE),
                 key || p.key,
+                p
+                    .color(`hsl(${Math.round(p.random(0, 360))}, 100%, 50%)`)
+                    .toString(),
                 p.random(MIN_INITIAL_SPEED, MAX_INITIAL_SPEED),
             ),
         );
