@@ -15,31 +15,47 @@ export const MIN_INITIAL_POSITION = 0;
 export const MAX_INITIAL_POSITION = 400;
 
 export default function sketch(p: p5) {
+    /**
+     * The setup function is called once when the program starts.
+     * It initializes the canvas and sets up any necessary variables.
+     */
     p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
     };
+
+    /**
+     * The windowResized function is called whenever the window is resized.
+     * It updates the canvas size to match the new window dimensions.
+     */
     p.windowResized = () => {
         p.resizeCanvas(p.windowWidth, p.windowHeight);
     };
 
+    /**
+     * The main draw loop of the p5 sketch.
+     * This function is called repeatedly until the program is stopped.
+     * It is responsible for drawing the canvas and updating the state of the keys.
+     */
     p.draw = () => {
         p.background("black");
 
         for (const key of keys) {
-            // Show the key.
+            // Call the show method of the key to draw it on the canvas.
             key.show(p);
 
-            // Move the key.
+            // Call the update method of the key to update its position and speed.
             key.update();
 
-            // Wrap around if they've moved off the canvas
+            // Call the checkEdges method of the key to check if it has moved off the canvas
             key.checkEdges(p);
 
+            // If the key is no longer alive, remove it from the keys array so we don't draw and update it anymore.
             if (!key.alive) {
                 keys.splice(keys.indexOf(key), 1);
             }
         }
     };
+
     /**
      * Handles key press events and creates new Key objects.
      * @param e - The keyboard event.
@@ -67,7 +83,7 @@ export default function sketch(p: p5) {
         } else if (e.code === "ArrowDown") {
             key = "↓";
         }
-        console.log(`hsl(${p.random(0, 360)}, 100%, 50%)`);
+
         // Create a new Key object with random position, size, and speed.
         // If the key is not a special key, use the pressed key's character.
         keys.push(
