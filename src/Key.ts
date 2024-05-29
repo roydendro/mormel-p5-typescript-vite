@@ -13,6 +13,8 @@ export class Key {
     // Movement parameters
     speed: number;
     alive: boolean;
+    angle: number;
+    rotationSpeed: number;
 
     constructor(
         x: number,
@@ -21,6 +23,8 @@ export class Key {
         letter: string,
         color: string,
         speed: number = 4,
+        angle: number = 0,
+        rotationSpeed: number,
     ) {
         this.x = x;
         this.y = y;
@@ -29,6 +33,8 @@ export class Key {
         this.color = color;
         this.speed = speed;
         this.alive = true;
+        this.angle = angle;
+        this.rotationSpeed = rotationSpeed;
     }
 
     show(p: p5) {
@@ -36,12 +42,18 @@ export class Key {
             return;
         }
 
+        p.push();
+        p.translate(this.x, this.y);
+        p.rotate(this.angle);
+
         // Start drawing of the key
         // Neon glow efect properties
-        p.drawingContext.shadowOffsetX = 4;
-        p.drawingContext.shadowOffsetY = 4;
-        p.drawingContext.shadowBlur = 12;
-        p.drawingContext.shadowColor = this.color;
+        const ctx = p.drawingContext;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 4;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = this.color;
+
         // Shape properties
         p.fill(0);
         p.stroke(255);
@@ -49,20 +61,22 @@ export class Key {
         // Sizing bases on amount of letters
         const width = this.size + (this.size / 1.5) * (this.letter.length - 1);
         // Render
-        p.rect(this.x, this.y, width, this.size, 15);
+        p.rect(0, 0, width, this.size, 15);
 
         // Start drawing of the letter
         // Neon glow efect properties
-        p.drawingContext.shadowOffsetX = 0;
-        p.drawingContext.shadowOffsetY = 0;
-        p.drawingContext.shadowBlur = 4;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.shadowBlur = 4;
         // Text render properties
         p.strokeWeight(0);
         p.fill(p.color(255, 255, 255));
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(this.size - 10);
         // Render
-        p.text(this.letter, this.x + width / 2, this.y + this.size / 2);
+        p.text(this.letter, 0, 0);
+
+        p.pop();
     }
 
     update() {
@@ -74,6 +88,8 @@ export class Key {
         this.y = this.y - this.speed;
         // Update speed using gravity. Clamp to max speed.
         this.speed = Math.max(this.speed - GRAVITY, -MAX_SPEED);
+        // Update the angle of the key based on the rotation speed. Use modulus to keep the angle between 0 and 360.
+        this.angle = (this.angle + this.rotationSpeed) % 360;
     }
 
     checkEdges(p: p5) {

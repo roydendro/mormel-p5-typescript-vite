@@ -13,6 +13,7 @@ export const MAX_INITIAL_SPEED = 75;
 export const MAX_SPEED = 100;
 export const MIN_INITIAL_POSITION = 0;
 export const MAX_INITIAL_POSITION = 400;
+export const MAX_ROTATION_SPEED = 2;
 
 export default function sketch(p: p5) {
     /**
@@ -21,6 +22,8 @@ export default function sketch(p: p5) {
      */
     p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
+        p.angleMode(p.DEGREES);
+        p.rectMode(p.CENTER);
     };
 
     /**
@@ -67,13 +70,13 @@ export default function sketch(p: p5) {
         if (e.code === "Space") {
             key = "SPACE";
         } else if (e.code === "MetaLeft" || e.code === "MetaRight") {
-            key = "CMD";
+            key = "⌘";
         } else if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
             key = "SHIFT";
         } else if (e.code === "ControlRight" || e.code === "ControlLeft") {
             key = "CTRL";
         } else if (e.code === "AltRight" || e.code === "AltLeft") {
-            key = "Opt";
+            key = "Alt";
         } else if (e.code === "ArrowLeft") {
             key = "←";
         } else if (e.code === "ArrowRight") {
@@ -97,6 +100,8 @@ export default function sketch(p: p5) {
                     .color(`hsl(${Math.round(p.random(0, 360))}, 100%, 50%)`)
                     .toString(),
                 p.random(MIN_INITIAL_SPEED, MAX_INITIAL_SPEED),
+                0,
+                p.random(-MAX_ROTATION_SPEED, MAX_ROTATION_SPEED),
             ),
         );
     };
