@@ -6,7 +6,7 @@ export const BACKGROUND_COLOR = "black";
 export const GRAVITY = 1.7;
 export const MAX_SIZE = 120;
 export const MIN_SIZE = 30;
-export const MIN_INITIAL_SPEED = 50;
+export const MIN_INITIAL_SPEED = 40;
 export const MAX_INITIAL_SPEED = 75;
 export const MAX_SPEED = 100;
 export const MIN_INITIAL_POSITION = 0;
@@ -85,7 +85,7 @@ export default function sketch(p: p5) {
         keys.push(new Key(x, y, size, key, color, speed, 0, rotationSpeed));
     };
     p.mouseClicked = (e: MouseEvent) => {
-        const key = "❤️";
+        const key = "❤";
         const x = e.clientX;
         const y =
             p.windowHeight +
