@@ -5,3 +5,15 @@ main {
     padding: 0;
     line-height: 0;
 }
+
+#github-link {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 2;
+    color: white;
+}
+
+#github-link img {
+    width: 32px;
+}

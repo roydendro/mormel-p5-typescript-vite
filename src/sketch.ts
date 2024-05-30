@@ -96,7 +96,6 @@ export default function sketch(p: p5) {
         const rotationSpeed = p.random(-MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
 
         keys.push(new Key(x, y, size, key, color, speed, 0, rotationSpeed));
-        return false;
     };
 }
 
