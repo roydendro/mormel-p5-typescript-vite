@@ -88,8 +88,10 @@ export default function sketch(p: p5) {
         keys.push(new Key(x, y, size, key, color, speed, 0, rotationSpeed));
     };
     p.mouseClicked = (e: MouseEvent) => {
-        // Prevent heart unicode character from being rendered as emoji
-        const key = "\u{2764}\u{FE0E}";
+        // Not the prettiest heart but all others get rendered as red emojis by android browsers.
+        // Visit https://en.wikipedia.org/wiki/Hearts_in_Unicode#Encoding
+        // It even ignores the solution here: https://mefody.dev/chunks/emoji-to-text/
+        const key = "\u{2661}";
         const x = e.clientX;
         const y =
             p.windowHeight +
