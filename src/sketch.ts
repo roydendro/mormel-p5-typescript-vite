@@ -1,108 +1,157 @@
 import type p5 from "p5";
 import { Key } from "./Key";
 
-// Create an array that will hold keys.
-const keys: Key[] = [];
-
 // Constants.
+export const BACKGROUND_COLOR = "black";
 export const GRAVITY = 1.7;
 export const MAX_SIZE = 120;
-export const MIN_SIZE = 40;
+export const MIN_SIZE = 30;
 export const MIN_INITIAL_SPEED = 50;
 export const MAX_INITIAL_SPEED = 75;
 export const MAX_SPEED = 100;
 export const MIN_INITIAL_POSITION = 0;
 export const MAX_INITIAL_POSITION = 400;
 export const MAX_ROTATION_SPEED = 2;
+export const HEADER_TEXT = "Mormel's website";
+export const HEADER_MAX_LETTER_ROTATION = 15;
+export const HEADER_MULTILINE_BREAKPOINT = 900;
+export const HEADER_LETTER_SPACING = 10;
 
+// Create arrays to hold keys.
+let keys: Key[] = [];
+let header: Key[] = [];
+
+/**
+ * Main sketch function.
+ * @param {p5} p - The p5 instance
+ */
 export default function sketch(p: p5) {
-    /**
-     * The setup function is called once when the program starts.
-     * It initializes the canvas and sets up any necessary variables.
-     */
     p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
         p.angleMode(p.DEGREES);
         p.rectMode(p.CENTER);
+        createHeaderKeys(p);
     };
 
-    /**
-     * The windowResized function is called whenever the window is resized.
-     * It updates the canvas size to match the new window dimensions.
-     */
     p.windowResized = () => {
         p.resizeCanvas(p.windowWidth, p.windowHeight);
+        createHeaderKeys(p);
     };
 
-    /**
-     * The main draw loop of the p5 sketch.
-     * This function is called repeatedly until the program is stopped.
-     * It is responsible for drawing the canvas and updating the state of the keys.
-     */
     p.draw = () => {
-        p.background("black");
+        p.background(BACKGROUND_COLOR);
 
-        for (const key of keys) {
-            // Call the show method of the key to draw it on the canvas.
+        header.forEach((key) => {
             key.show(p);
+            // No need to update, always render the heading
+        });
 
-            // Call the update method of the key to update its position and speed.
+        keys.forEach((key) => {
+            key.show(p);
             key.update();
-
-            // Call the checkEdges method of the key to check if it has moved off the canvas
             key.checkEdges(p);
+        });
 
-            // If the key is no longer alive, remove it from the keys array so we don't draw and update it anymore.
-            if (!key.alive) {
-                keys.splice(keys.indexOf(key), 1);
-            }
-        }
+        keys = keys.filter((key) => key.alive);
     };
 
-    /**
-     * Handles key press events and creates new Key objects.
-     * @param e - The keyboard event.
-     */
+    const specialKeys: { [key: string]: string } = {
+        Space: "SPACE",
+        MetaLeft: "⌘",
+        MetaRight: "⌘",
+        ShiftLeft: "SHIFT",
+        ShiftRight: "SHIFT",
+        ControlLeft: "CTRL",
+        ControlRight: "CTRL",
+        AltLeft: "Alt",
+        AltRight: "Alt",
+        ArrowLeft: "←",
+        ArrowRight: "→",
+        ArrowUp: "↑",
+        ArrowDown: "↓",
+    };
+
     p.keyPressed = (e: KeyboardEvent) => {
-        let key = null;
+        const key = specialKeys[e.code] || p.key;
+        const x = p.random(0, p.windowWidth - MAX_SIZE);
+        const y =
+            p.windowHeight +
+            p.random(MIN_INITIAL_POSITION, MAX_INITIAL_POSITION);
+        const size = p.random(MIN_SIZE, MAX_SIZE);
+        const speed = p.random(MIN_INITIAL_SPEED, MAX_INITIAL_SPEED);
+        const color = getRandomBrightColor(p);
+        const rotationSpeed = p.random(-MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
 
-        // Map specific "special" keys to a different output.
-        if (e.code === "Space") {
-            key = "SPACE";
-        } else if (e.code === "MetaLeft" || e.code === "MetaRight") {
-            key = "⌘";
-        } else if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
-            key = "SHIFT";
-        } else if (e.code === "ControlRight" || e.code === "ControlLeft") {
-            key = "CTRL";
-        } else if (e.code === "AltRight" || e.code === "AltLeft") {
-            key = "Alt";
-        } else if (e.code === "ArrowLeft") {
-            key = "←";
-        } else if (e.code === "ArrowRight") {
-            key = "→";
-        } else if (e.code === "ArrowUp") {
-            key = "↑";
-        } else if (e.code === "ArrowDown") {
-            key = "↓";
-        }
+        keys.push(new Key(x, y, size, key, color, speed, 0, rotationSpeed));
+    };
+    p.mouseClicked = (e: MouseEvent) => {
+        const key = "❤️";
+        const x = e.clientX;
+        const y =
+            p.windowHeight +
+            p.random(MIN_INITIAL_POSITION, MAX_INITIAL_POSITION);
+        const size = p.random(MIN_SIZE, MAX_SIZE);
+        const speed = p.random(MIN_INITIAL_SPEED, MAX_INITIAL_SPEED);
+        const color = getRandomBrightColor(p);
+        const rotationSpeed = p.random(-MAX_ROTATION_SPEED, MAX_ROTATION_SPEED);
 
-        // Create a new Key object with random position, size, and speed.
-        // If the key is not a special key, use the pressed key's character.
-        keys.push(
-            new Key(
-                p.random(0, p.windowWidth - MAX_SIZE),
-                p.windowHeight +
-                    p.random(MIN_INITIAL_POSITION, MAX_INITIAL_POSITION),
-                p.random(MIN_SIZE, MAX_SIZE),
-                key || p.key,
-                p
-                    .color(`hsl(${Math.round(p.random(0, 360))}, 100%, 50%)`)
-                    .toString(),
-                p.random(MIN_INITIAL_SPEED, MAX_INITIAL_SPEED),
-                0,
-                p.random(-MAX_ROTATION_SPEED, MAX_ROTATION_SPEED),
-            ),
-        );
+        keys.push(new Key(x, y, size, key, color, speed, 0, rotationSpeed));
+        return false;
     };
 }
+
+/**
+ * Function to create the header keys based on the window width.
+ * @param {p5} p - The p5 instance
+ */
+const createHeaderKeys = (p: p5) => {
+    // Reset header
+    header = [];
+
+    // Determine render mode
+    const shouldMultiLine = p.windowWidth < HEADER_MULTILINE_BREAKPOINT;
+    const lines = shouldMultiLine ? HEADER_TEXT.split(" ") : [HEADER_TEXT];
+
+    // Determine letter size
+    let currentLine = 1;
+    const maxLineLength = shouldMultiLine
+        ? lines.reduce((maxLength, str) => Math.max(maxLength, str.length), 0)
+        : HEADER_TEXT.length;
+    const size = p.windowWidth / (maxLineLength * 1.4);
+
+    // Render each line
+    for (const line of lines) {
+        // Render each letter
+        for (let i = 0; i < line.length; i++) {
+            // Prevent spaces from being rendered as keys.
+            if (line.charAt(i) !== " ") {
+                const x =
+                    p.width / 2 +
+                    (size + HEADER_LETTER_SPACING) * (i - line.length / 2) +
+                    size / 2;
+                const y = currentLine * size * 1.1;
+                const color = getRandomBrightColor(p);
+                const rotation = p.random(
+                    -HEADER_MAX_LETTER_ROTATION,
+                    HEADER_MAX_LETTER_ROTATION,
+                );
+
+                header.push(
+                    new Key(x, y, size, line.charAt(i), color, 0, rotation, 0),
+                );
+            }
+        }
+        currentLine++;
+    }
+};
+
+/**
+ * Function to get a random bright color.
+ * @param {p5} p - The p5 instance
+ * @returns {string} - A random bright color in HSL format.
+ */
+const getRandomBrightColor = (p: p5): string => {
+    return p
+        .color(`hsl(${Math.round(p.random(0, 360))}, 100%, 50%)`)
+        .toString();
+};
