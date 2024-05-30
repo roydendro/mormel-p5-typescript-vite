@@ -31,6 +31,9 @@ export default function sketch(p: p5) {
         p.angleMode(p.DEGREES);
         p.rectMode(p.CENTER);
         createHeaderKeys(p);
+
+        // Set to improve mobile performance
+        p.pixelDensity(1);
     };
 
     p.windowResized = () => {
@@ -85,7 +88,8 @@ export default function sketch(p: p5) {
         keys.push(new Key(x, y, size, key, color, speed, 0, rotationSpeed));
     };
     p.mouseClicked = (e: MouseEvent) => {
-        const key = "❤";
+        // Prevent heart unicode character from being rendered as emoji
+        const key = "\u{2764}\u{FE0E}";
         const x = e.clientX;
         const y =
             p.windowHeight +
